@@ -1,26 +1,66 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <h3>List of Episodes</h3>
+    <div style="display: flex; border: 1px solid red">
+      <div class="shows" v-for="episode in fidel.slice(0, 3)" :key="episode.id">
+        <div style="display: flex; flex-direction: column; height: 200px">
+          <span>{{ episode.name + " SERVER" }}</span>
+          <img :src="episode.image.medium" />
+        </div>
+      </div>
+
+      <div
+        class="shows"
+        v-for="episode in episodes.slice(3, 6)"
+        :key="episode.id"
+        style="display: flex; border: 1px solid blue"
+      >
+        <div style="display: flex; flex-direction: column; height: 200px">
+          <span>{{ episode.name + "from client" }}</span>
+          <img :src="episode.image.medium" />
+        </div>
+      </div>
+    </div>
+
+    <video
+      v-for="n in 20"
+      :key="n"
+      width="320"
+      height="240"
+      autoplay
+      loop
+      preload="metadata"
+      muted
+    >
+      <source src="@/assets/sample-mp4-file.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+import { ref, onMounted } from "vue";
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+const episodes = ref([]);
+const fidel = ref([]);
+
+async function carregar() {
+  const fetchData = await fetch(
+    `https://api.tvmaze.com/shows/345?embed=episodes`
+  );
+
+  const json = await fetchData.json();
+  fidel.value = json._embedded.episodes;
 }
+
+carregar();
+
+onMounted(async () => {
+  const fetchData = await fetch(
+    `https://api.tvmaze.com/shows/345?embed=episodes`
+  );
+
+  const json = await fetchData.json();
+  episodes.value = json._embedded.episodes;
+});
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
