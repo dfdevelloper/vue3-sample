@@ -2,7 +2,7 @@
   <div id="app">
     <h3>List of Episodes</h3>
     <div style="display: flex; border: 1px solid red">
-      <div class="shows" v-for="episode in fidel.slice(0, 3)" :key="episode.id">
+      <div class="shows" v-for="episode in episodes.slice(0, 3)" :key="episode.id">
         <div style="display: flex; flex-direction: column; height: 200px">
           <span>{{ episode.name + " SERVER" }}</span>
           <img :src="episode.image.medium" />
@@ -39,10 +39,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
 const episodes = ref([]);
-const fidel = ref([]);
 
 async function carregar() {
   const fetchData = await fetch(
@@ -50,17 +49,9 @@ async function carregar() {
   );
 
   const json = await fetchData.json();
-  fidel.value = json._embedded.episodes;
+  episodes.value = json._embedded.episodes;
 }
 
 carregar();
 
-onMounted(async () => {
-  const fetchData = await fetch(
-    `https://api.tvmaze.com/shows/345?embed=episodes`
-  );
-
-  const json = await fetchData.json();
-  episodes.value = json._embedded.episodes;
-});
 </script>
